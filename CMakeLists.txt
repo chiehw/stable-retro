@@ -193,10 +193,16 @@ function(add_core platform core_name)
         "${core_fpic_flags} -mmacosx-version-min=10.7 -stdlib=libc++")
   endif()
 
+  # Set environment variables for macOS to avoid i386 architecture issues
+  set(core_extra_env "")
+  if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "i386")
+    set(core_extra_env "NOUNIVERSAL=1 ARCHFLAGS=-arch ${CMAKE_SYSTEM_PROCESSOR}")
+  endif()
+
   add_custom_command(
     OUTPUT "${TARGET_PATH}"
     COMMAND
-      ${CMAKE_COMMAND} -E env CFLAGS=${core_cflags} CXXFLAGS=${core_cxxflags}
+      ${CMAKE_COMMAND} -E env ${core_extra_env} CFLAGS=${core_cflags} CXXFLAGS=${core_cxxflags}
       LDFLAGS=${core_ldflags} $(MAKE) -f ${makefile} CC="${CMAKE_C_COMPILER}"
       CXX="${CMAKE_CXX_COMPILER}" fpic=${core_fpic_flags} ${libretro_platform}
     COMMAND ${CMAKE_COMMAND} -E copy "${core_name}_libretro${DYNLIB_SUFFIX}"
@@ -341,7 +347,7 @@ add_library(
   src/zipfile.cpp
   ${LUA_LIBRARY})
 target_link_libraries(retro-base ${ZLIB_LIBRARY} ${LIBZIP_LIBRARIES}
-                      ${LUA_LIBRARY} ${LUA_LIBRRAY})
+                      ${LUA_LIBRARY})
 add_dependencies(retro-base ${CORE_TARGETS})
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")

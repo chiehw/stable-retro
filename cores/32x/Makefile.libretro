@@ -104,7 +104,7 @@ else ifeq ($(platform), osx)
         LDFLAGS  += $(TARGET_RULE)
    endif
 
-   ifndef ($(NOUNIVERSAL))
+   ifndef NOUNIVERSAL
       CFLAGS  += $(ARCHFLAGS)
       LDFLAGS += $(ARCHFLAGS)
    endif

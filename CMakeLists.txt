@@ -196,7 +196,7 @@ function(add_core platform core_name)
   # Set environment variables for macOS to avoid i386 architecture issues
   set(core_extra_env "")
   if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "i386")
-    set(core_extra_env "NOUNIVERSAL=1 ARCHFLAGS=-arch ${CMAKE_SYSTEM_PROCESSOR}")
+    set(core_extra_env "ARCHFLAGS=-arch ${CMAKE_SYSTEM_PROCESSOR}")
   endif()
 
   add_custom_command(
